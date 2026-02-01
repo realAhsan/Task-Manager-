@@ -1,0 +1,44 @@
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      - mongodb
+
+  task-service:
+    build: ./task-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./task-service/.env
+    depends_on:
+      - mongodb  
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongodb
+      - rabbitmq    
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db 
+  rabbitmq:
+    image: rabbitmq:management  
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+ 
+volumes:
+  mongo-data:
